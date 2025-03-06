@@ -1,6 +1,8 @@
 # 3_25_africa_readiness
 This repository gathers all data work related to the Africa Readiness for GVC work project with Dr. Koopman and Anthony Moncada.
 
+Check - https://www.smefinanceforum.org/data-sites/msme-country-indicators for SME, they work with WB and IFC. 
+
 ### individuals-using-the-internet_1741283929073.csv
 -Internet penetration (% of population) [a.k.a. ‘Individuals using the Internet (% of population)’] : retrieved from https://datahub.itu.int/indicators/
 
