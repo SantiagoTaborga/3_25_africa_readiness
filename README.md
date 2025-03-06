@@ -25,3 +25,6 @@ This repository gathers all data work related to the Africa Readiness for GVC wo
 ### B-READY-2024-PILLAR-TOPIC-SCORES-2024.xlsx
 -Business ready pillar scores (a.k.a.? ease of doing business ranking): retrieved from https://www.worldbank.org/en/businessready/data
 Note: Doing Business has been discontinued due to data irregularities in some years. Business Ready seems to be the effort to replace it; but the data is not comparable (i.e. 2024 is the only year that should be used for comparisons)
+
+### OECD,DF_DP_LIVE,+.EXPBSNS...A.csv
+-SME contribution to exports (%): retrieved from https://data-explorer.oecd.org/vis?lc=en&df[ds]=DisseminateArchiveDMZ&df[id]=DF_DP_LIVE&df[ag]=OECD&df[vs]=&av=true&pd=%2C&dq=.EXPBSNS...A&to[TIME_PERIOD]=false&vw=ov
