@@ -28,3 +28,6 @@ Note: Doing Business has been discontinued due to data irregularities in some ye
 
 ### OECD,DF_DP_LIVE,+.EXPBSNS...A.csv
 -SME contribution to exports (%): retrieved from https://data-explorer.oecd.org/vis?lc=en&df[ds]=DisseminateArchiveDMZ&df[id]=DF_DP_LIVE&df[ag]=OECD&df[vs]=&av=true&pd=%2C&dq=.EXPBSNS...A&to[TIME_PERIOD]=false&vw=ov
+
+
+Final Step, Before adding weights, we must conduct a PCA: https://rpubs.com/KarolinaSzczesna/862710
