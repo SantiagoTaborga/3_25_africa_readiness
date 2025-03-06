@@ -22,6 +22,6 @@ This repository gathers all data work related to the Africa Readiness for GVC wo
 ### wgidataset.dta
 -Political stability index: https://www.worldbank.org/en/publication/worldwide-governance-indicators
 
-###
+### B-READY-2024-PILLAR-TOPIC-SCORES-2024.xlsx
 -Business ready pillar scores (a.k.a.? ease of doing business ranking): retrieved from https://www.worldbank.org/en/businessready/data
 Note: Doing Business has been discontinued due to data irregularities in some years. Business Ready seems to be the effort to replace it; but the data is not comparable (i.e. 2024 is the only year that should be used for comparisons)
