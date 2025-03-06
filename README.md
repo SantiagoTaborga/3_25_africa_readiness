@@ -7,5 +7,7 @@ This repository gathers all data work related to the Africa Readiness for GVC wo
 ### MCI_Data_2024.csv
 -Mobile connectivity index: retrieved from https://www.mobileconnectivityindex.com/assets/excelData/MCI_Data_2024.xlsx
 
-### 
--Trade to GDP ratio: 
+### API_NE.TRD.GNFS.ZS_DS2_en_csv_v2_75991.csv
+-Trade to GDP ratio: retrieved from: https://api.worldbank.org/v2/en/indicator/NE.TRD.GNFS.ZS?downloadformat=csv
+
+
