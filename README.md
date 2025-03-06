@@ -15,3 +15,13 @@ This repository gathers all data work related to the Africa Readiness for GVC wo
 
 ### Share of modern renewables database.xlsx
 -Share of renewable energy (% of total) [a.k.a. 'Share of modern renewables in total final energy consumption'] : retrieved from https://www.iea.org/data-and-statistics/data-product/sdg7-database#share-of-modern-renewables
+
+### CBAM-exposure-index-webpage-final.xlsx
+-Carbon intensity of exports: retrieved from https://www.worldbank.org/en/data/interactive/2023/06/15/relative-cbam-exposure-index
+
+### wgidataset.dta
+-Political stability index: https://www.worldbank.org/en/publication/worldwide-governance-indicators
+
+###
+-Business ready pillar scores (a.k.a.? ease of doing business ranking): retrieved from https://www.worldbank.org/en/businessready/data
+Note: Doing Business has been discontinued due to data irregularities in some years. Business Ready seems to be the effort to replace it; but the data is not comparable (i.e. 2024 is the only year that should be used for comparisons)
