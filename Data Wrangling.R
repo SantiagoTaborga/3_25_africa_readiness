@@ -2,6 +2,7 @@ library(tidyverse)
 library(readxl)
 library(haven)
 library(janitor)
+library(knitr)
 
 # setup -------
 
@@ -100,4 +101,8 @@ df_list <- list(internet_penetration, mobile_connectivity_index, trade_to_GDP, l
 
 merged_df <- reduce(df_list, full_join, by = "country") %>%
   mutate(across(where(is.numeric), ~ round(.x, 3)))
+
+## saving the table
+library(writexl)
+write_xlsx(merged_df, "cleaned_data_04_01_25.xlsx")
 
