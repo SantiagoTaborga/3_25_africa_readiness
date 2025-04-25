@@ -1,0 +1,148 @@
+# THE NEW GEOMETRY OF GLOBAL VALUE CHAINS: AFRICA’S STRATEGIC POSITION IN A SHIFTING TRADE ORDER
+# Data Processing Script
+# Author: Anthony Cano
+# Date: 2025
+
+# ------------------ Load Libraries ------------------
+library(tidyverse)
+library(readxl)
+library(haven)
+library(janitor)
+library(knitr)
+library(writexl)
+
+# ------------------ Define Normalization Function ------------------
+normalize_minmax <- function(x) {
+  rng <- range(x, na.rm = TRUE)
+  return((x - rng[1]) / (rng[2] - rng[1]))
+}
+
+# ------------------ TECHNOLOGY READINESS ------------------
+
+# Internet Penetration Index (Source: ITU)
+internet_penetration <- read_csv("individuals-using-the-internet_1741283929073.csv") %>%
+  rename(country = entityName) %>%
+  group_by(country) %>%
+  summarize(int_pen_raw = mean(dataValue, na.rm = TRUE)) %>%
+  mutate(int_pen = round(normalize_minmax(int_pen_raw), 3)) %>%
+  select(country, int_pen)
+
+# Mobile Connectivity Index (Source: GSMA)
+mobile_connectivity_index <- read_csv("MCI_Data_2024.csv") %>%
+  rename(country = Country) %>%
+  group_by(country) %>%
+  summarize(mob_con_raw = mean(Index, na.rm = TRUE)) %>%
+  mutate(mob_con = round(normalize_minmax(mob_con_raw), 3)) %>%
+  select(country, mob_con)
+
+# ------------------ TRADE & INVESTMENT READINESS ------------------
+
+# Trade-to-GDP Ratio (Source: World Bank WDI)
+trade_data <- read_csv("API_NE.TRD.GNFS.ZS_DS2_en_csv_v2_75991 (1).csv")
+trade_to_GDP <- trade_data %>%
+  rename(country = `Country Name`) %>%
+  pivot_longer(cols = starts_with("19") | starts_with("20"), names_to = "year", values_to = "trad_GDP") %>%
+  group_by(country) %>%
+  summarize(trad_GDP_raw = mean(trad_GDP, na.rm = TRUE)) %>%
+  mutate(trad_GDP = round(normalize_minmax(trad_GDP_raw), 3)) %>%
+  select(country, trad_GDP)
+
+# Logistics Performance Index (Source: World Bank LPI)
+sheet_names <- excel_sheets("International_LPI_from_2007_to_2023_0.xlsx")
+logistics_performance_index <- map_dfr(sheet_names, ~ read_excel("International_LPI_from_2007_to_2023_0.xlsx", sheet = .x) %>%
+                                         clean_names() %>%
+                                         mutate(year = .x)) %>%
+  group_by(country) %>%
+  summarize(lpi_raw = mean(lpi_score, na.rm = TRUE)) %>%
+  mutate(lpi_score = round(normalize_minmax(lpi_raw), 3)) %>%
+  select(country, lpi_score)
+
+# ------------------ SUSTAINABILITY READINESS ------------------
+
+# Renewable Energy Consumption Index (Source: IEA)
+modern_renewables <- read_excel("Share of modern renewables database.xlsx") %>%
+  rename(country = `Country/Region`) %>%
+  pivot_longer(cols = `1990`:`2021`, names_to = "year", values_to = "ren_energy") %>%
+  mutate(ren_energy = na_if(ren_energy, "..")) %>%
+  group_by(country) %>%
+  summarize(ren_energy_raw = mean(as.numeric(ren_energy), na.rm = TRUE)) %>%
+  mutate(ren_energy = round(normalize_minmax(ren_energy_raw), 3)) %>%
+  select(country, ren_energy)
+
+# Carbon Intensity of GDP (Source: World Bank 2023)
+carbon_intensity_data <- read_csv("API_EN.GHG.CO2.RT.GDP.PP.KD_DS2_en_csv_v2_31771.csv", skip = 4)
+carbon_intensity_gdp <- carbon_intensity_data %>%
+  rename(country = `Country Name`) %>%
+  select(country, `2023`) %>%
+  rename(carbon_intensity_gdp = `2023`) %>%
+  mutate(carbon_intensity_gdp = round(normalize_minmax(carbon_intensity_gdp), 3))
+
+# ------------------ GEOPOLITICS & INSTITUTIONAL READINESS ------------------
+
+# Political Stability Index (Source: World Bank WGI)
+pol_stab_raw <- read_dta("wgidataset.dta")
+political_stability_index <- pol_stab_raw %>%
+  rename(country = countryname) %>%
+  mutate(pol_stability_raw = estimate + 2.5) %>%
+  group_by(country) %>%
+  summarize(avg_stability = mean(pol_stability_raw, na.rm = TRUE)) %>%
+  mutate(pol_stability = round(normalize_minmax(avg_stability), 3)) %>%
+  select(country, pol_stability)
+
+# Ease of Doing Business Index (Source: World Bank 2019)
+Business <- read_excel("Business.xlsx") %>% clean_names()
+ease_of_business <- Business %>%
+  rename(country = economy, ease_raw = db_2020) %>%
+  mutate(ease_business = round(normalize_minmax(ease_raw), 3)) %>%
+  select(country, ease_business)
+
+# ------------------ Prepare for Export ------------------
+
+# Rename columns for Data Annex
+internet_penetration_export <- internet_penetration %>% rename(`Internet Penetration Index (ITU)` = int_pen)
+mobile_connectivity_export <- mobile_connectivity_index %>% rename(`Mobile Connectivity Index (GSMA)` = mob_con)
+trade_to_GDP_export <- trade_to_GDP %>% rename(`Trade-to-GDP Ratio (World Bank)` = trad_GDP)
+logistics_performance_export <- logistics_performance_index %>% rename(`Logistics Performance Index (World Bank LPI)` = lpi_score)
+modern_renewables_export <- modern_renewables %>% rename(`Renewable Energy Consumption Index (IEA)` = ren_energy)
+carbon_intensity_export <- carbon_intensity_gdp %>% rename(`Carbon Intensity of GDP (World Bank)` = carbon_intensity_gdp)
+political_stability_export <- political_stability_index %>% rename(`Political Stability Index (World Bank WGI)` = pol_stability)
+ease_of_business_export <- ease_of_business %>% rename(`Ease of Doing Business Index (World Bank 2019)` = ease_business)
+
+# Merge related indicators into organized Data Annex sheets
+technology_sheet <- full_join(internet_penetration_export, mobile_connectivity_export, by = "country") %>%
+  replace_na(list(
+    `Internet Penetration Index (ITU)` = 0,
+    `Mobile Connectivity Index (GSMA)` = 0
+  ))
+
+trade_sheet <- full_join(trade_to_GDP_export, logistics_performance_export, by = "country") %>%
+  replace_na(list(
+    `Trade-to-GDP Ratio (World Bank)` = 0,
+    `Logistics Performance Index (World Bank LPI)` = 0
+  ))
+
+sustainability_sheet <- full_join(modern_renewables_export, carbon_intensity_export, by = "country") %>%
+  replace_na(list(
+    `Renewable Energy Consumption Index (IEA)` = 0,
+    `Carbon Intensity of GDP (World Bank)` = 0
+  ))
+
+geopolitics_sheet <- full_join(political_stability_export, ease_of_business_export, by = "country") %>%
+  replace_na(list(
+    `Political Stability Index (World Bank WGI)` = 0,
+    `Ease of Doing Business Index (World Bank 2019)` = 0
+  ))
+
+# ------------------ Export Cleaned and Organized Data ------------------
+
+write_xlsx(
+  list(
+    "Technology Readiness" = technology_sheet,
+    "Trade & Investment Readiness" = trade_sheet,
+    "Sustainability Readiness" = sustainability_sheet,
+    "Geopolitics & Institutional Readiness" = geopolitics_sheet
+  ),
+  path = "Global_Value_Chain_Readiness_Data_Annex_FINAL.xlsx"
+)
+
+print("✅ Data annex exported successfully with 3 decimal formatting and N/A replacements.")
